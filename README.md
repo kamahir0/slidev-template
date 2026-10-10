@@ -34,6 +34,7 @@ npm install
 | `npm run build` | 静的HTML（SPA）として `dist/` にビルド |
 | `npm run export` | PDFファイルとしてエクスポート（要: Playwright） |
 | `npm run export:png` | 各スライドをPNG画像としてエクスポート |
+| `npm run export:pptx` | PowerPoint（`.pptx`）としてエクスポート（動画を自動GIF化して正確に埋め込み） |
 
 ---
 
@@ -48,7 +49,8 @@ npm install
 │   ├── images/                  # 画像ファイル置き場
 │   └── videos/                  # 動画ファイル置き場
 ├── scripts/
-│   └── check_staged_size.js     # 50MB超メディアファイルの検知スクリプト
+│   ├── check_staged_size.js     # 50MB超メディアファイルの検知スクリプト
+│   └── export_pptx_with_gifs.mjs# 動画GIF埋め込み対応PPTXエクスポート
 ├── styles/
 │   └── index.css                # 日本語フォント・カード・バッジ等カスタムCSS
 ├── package.json
@@ -64,6 +66,22 @@ npm install
 
 - `npm install` 実行時に `prepare` スクリプトによって自動的に有効化されます。
 - ブロックされた場合は、メッセージの指示に従って `git reset HEAD <ファイル名>` でステージングを解除し、圧縮や動画変換を行ってください。
+
+---
+
+## 🎞️ PowerPoint / Google スライドへのエクスポート（動画対応）
+
+通常の Slidev の PPTX 書き出しでは動画が静止画になってしまいますが、本テンプレートの `npm run export:pptx` を使用すると：
+
+1. スライド内の `<video>` 要素を自動検知
+2. `ffmpeg` で軽量なループ GIF アニメーションに変換
+3. **ブラウザ（Playwright）上でレンダリングされた `<video>` の DOM 座標を自動計測**
+4. スライド画像の上からミリ単位で正確な位置・サイズに GIF をオーバーレイ配置した `dist/slides.pptx` を生成
+5. スピーカーノート（原稿）も PPTX のノートに自動反映
+
+> **💡 ヒント:**  
+> 生成された `dist/slides.pptx` を Google ドライブにアップロードして「Google スライドで開く」と、ブラウザ上や社内共有でも動画が自動ループ再生された状態でプレゼンできます。  
+> ※ 動画の GIF 変換にはマシン環境に `ffmpeg` が必要です（入っていない場合は静止画スライドとして出力されます）。
 
 ---
 
